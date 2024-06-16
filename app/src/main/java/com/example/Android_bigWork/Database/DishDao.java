@@ -19,7 +19,8 @@ public interface DishDao {
      *
      * @param
      * @return Query
-     * @Author tankofpacer
+     * @Author Anduin9527
+     * @date 2022/10/12 9:14
      * @commit
      */
     @Query("SELECT * FROM dish_table ORDER BY CID")
@@ -30,7 +31,8 @@ public interface DishDao {
      *
      * @param
      * @return Query
-     * @Author tankofpacer
+     * @Author Anduin9527
+     * @date 2022/10/12 9:14
      * @commit
      */
     @Query("DELETE FROM dish_table")
@@ -74,4 +76,8 @@ public interface DishDao {
      */
     @Query("SELECT * FROM dish_table WHERE category = :category")
     List<Dish> getDishByCategory(String category);
+
+    @Query("SELECT COUNT(*) FROM dish_table")
+    int getDishCount();
+
 }

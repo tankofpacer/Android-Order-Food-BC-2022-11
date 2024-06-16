@@ -64,6 +64,7 @@ import com.youth.banner.Banner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
@@ -78,7 +79,6 @@ public class DishMenuFragment extends Fragment {
     Button payment;
     private String userName;
     private Banner banner;
-
 
     // 界面数据(列表)
     private ArrayList<Dish> dishList;
@@ -154,7 +154,7 @@ public class DishMenuFragment extends Fragment {
         FoodCategoryAdapter foodCategoryAdapter = new FoodCategoryAdapter(getContext(), categoryItems);
         listView.setAdapter(foodCategoryAdapter);
 
-        // 菜品栏滑动监听
+// 菜品栏滑动监听
         stickyListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -170,7 +170,7 @@ public class DishMenuFragment extends Fragment {
             }
         });
 
-        // 类别栏按钮点击监听
+// 类别栏按钮点击监听
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -184,7 +184,7 @@ public class DishMenuFragment extends Fragment {
             }
         });
 
-        // 支付按钮点击事件
+// 支付按钮点击事件
         payment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -317,7 +317,8 @@ public class DishMenuFragment extends Fragment {
      * 更新购物车已购金额、
      *
      * @return void
-     * @Author 
+     * @Author Bubu
+     * @date 2022/10/14 21:03
      * @commit
      */
     public void updateShoppingCarAccount() {
@@ -334,7 +335,8 @@ public class DishMenuFragment extends Fragment {
      *
      * @param money 设置的金额
      * @return void
-     * @Author 
+     * @Author Bubu
+     * @date 2022/10/14 19:55
      * @commit
      */
     public void setShoppingCarAccount(double money) {
@@ -363,7 +365,8 @@ public class DishMenuFragment extends Fragment {
      *
      * @param view
      * @return void
-     * @Author 
+     * @Author Bubu
+     * @date 2022/10/12 20:51
      * @commit none
      */
     private void bindViews(View view) {
@@ -379,7 +382,7 @@ public class DishMenuFragment extends Fragment {
      * 初始化红包
      *
      * @return void
-     * @Author Bubu
+     * @Author Anduin9527
      * @date 2022/10/29 10:18
      * @commit
      */
@@ -402,6 +405,7 @@ public class DishMenuFragment extends Fragment {
                                     @Override
                                     public void onClick(XToast<?> toast, ImageView view) {
                                         toast.cancel();
+                                        count[0] -= 1;
                                     }
                                 })
                                 .setOnClickListener(R.id.iv_open, new XToast.OnClickListener<ImageView>() {
@@ -421,18 +425,20 @@ public class DishMenuFragment extends Fragment {
                                                         .setContentView(R.layout.window_hint)
                                                         .setAnimStyle(R.style.IOSAnimStyle)
                                                         .setImageDrawable(android.R.id.icon, R.drawable.yanhua)
-                                                        .setText(android.R.id.message, "成功领取\n" + couponText + "优惠券")
+                                                        .setText(android.R.id.message, getRString(R.string.successfullyReceived)
+                                                                + "\n" +
+                                                                couponText
+                                                                + " " + getRString(R.string.coupon))
                                                         .show();
                                                 toast.cancel();
                                             }
                                         }, 900);
-                                        count[0] += 1;
                                         Log.d(TAG, "redPack: " + couponDao.getAllCoupon(user.username));
-
                                     }
                                 })
                                 .show();
-                        if (count[0] == 2) {
+                        count[0] += 1;
+                        if (count[0] == 3) {
                             toast.cancel();
                         }
                     }
@@ -446,7 +452,8 @@ public class DishMenuFragment extends Fragment {
      * 随机生成优惠券，并插入数据库
      *
      * @return String
-     * @Author 
+     * @Author Anduin9527
+     * @date 2022/10/18 20:47
      * @commit
      */
     private String geneCoupon() {
@@ -455,17 +462,31 @@ public class DishMenuFragment extends Fragment {
         String couponText = "";
         double condition = 0, reduction = 0, discount = 0;
         int type = (int) (Math.random() * 2);
+        boolean isChinese = false;
+        String language = Locale.getDefault().getLanguage();
+        if (language.equals("CN") || language.equals("zh")) {
+            isChinese = true;
+        }
         if (type == 1) {
             condition = (int) (Math.random() * 100) + 1;
             reduction = (int) (Math.random() * condition * 0.7) + 1;
-            couponText = "满" + condition + "减" + reduction;
+            if (isChinese) {
+                couponText = "满" + condition + "减" + reduction;
+            } else {
+                couponText = "Over " + condition + " Minus " + reduction;
+            }
         } else {
             discount = (int) (Math.random() * 4) + 2;
-            couponText = discount + "折";
+            if (isChinese) {
+                couponText = discount + "折";
+            } else {
+                couponText = (10 - discount) * 10 + "% OFF";
+            }
         }
         //插入数据库
 
         couponDao.addCoupon(user.username, type, discount, condition, reduction);
+
         return couponText;
     }
 
@@ -474,7 +495,8 @@ public class DishMenuFragment extends Fragment {
      *
      * @param id
      * @return String
-     * @Author 
+     * @Author Anduin9527
+     * @date 2022/10/12 8:29
      * @commit
      */
     private String getRString(@StringRes int id) {
@@ -486,7 +508,8 @@ public class DishMenuFragment extends Fragment {
      *
      * @return void
      * @description
-     * @Author 
+     * @Author Bubu
+     * @date 2022/10/12 17:45
      * @commit
      */
     private void initDishList() {
@@ -509,7 +532,8 @@ public class DishMenuFragment extends Fragment {
      * 初始化类别列表，从商品列表中提取分类
      *
      * @return void
-     * @Author 
+     * @Author Bubu
+     * @date 2022/10/13 0:51
      * @commit
      */
     private void initCategoryItems() {
@@ -541,7 +565,8 @@ public class DishMenuFragment extends Fragment {
      * 显示购物车
      *
      * @return void
-     * @Author 
+     * @Author Bubu
+     * @date 2022/10/12 17:45
      * @commit
      */
     public void showShoppingCar() {
@@ -577,7 +602,7 @@ public class DishMenuFragment extends Fragment {
                 String couponString = selectedCoupon.toString();
                 Log.d(TAG, "onCouponItemClick: select " + couponString);
                 updateShoppingCarAccount();
-            }
+        }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -611,7 +636,8 @@ public class DishMenuFragment extends Fragment {
      * 清空购物车
      *
      * @return void
-     * @Author 
+     * @Author Bubu
+     * @date 2022/10/26 13:47
      * @commit
      */
     public void clearShoppingCar() {

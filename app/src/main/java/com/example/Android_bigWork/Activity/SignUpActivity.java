@@ -56,7 +56,6 @@ public class SignUpActivity extends AppCompatActivity
         //设置电话号码输入框只能输入数字
         mPhoneNumber.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
         final int[] isFemale = {0};
-        final int change_int = 5;
         //获取数据库
         PersonDatabase personDatabase = PersonDatabase.getDatabase(this);
         PersonDao personDao = personDatabase.getPersonDao();
